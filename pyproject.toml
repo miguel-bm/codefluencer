@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "codefluencer"
+version = "0.1.0"
+description = "A project for generating didactic contets for programming languages automatically and posting them to social media."
+authors = ["Miguel Blanco Marcos <miguel.blanco.marcos@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.31.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+pytest = "^7.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
