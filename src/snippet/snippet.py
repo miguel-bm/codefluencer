@@ -58,7 +58,19 @@ class Snippet:
         Returns:
             Path: The path of the image file.
         """
-        headers = {"Content-Type": "application/json"}
+        filename = (
+            f"snippet-{hash((self._content, self._language, theme))}"
+            if filename is None
+            else filename
+        )
+        location = Path("snippets") if location is None else location
+
+        if not location.is_dir():
+            raise ValueError("Location must be a valid directory path.")
+        if not filename.isidentifier():
+            raise ValueError("Filename must be a valid identifier.")
+
+        headers = {"Content-Type": "application/json", "User-Agent": "CodeFluencer"}
         data = {
             "code": self._content,
             "settings": {
@@ -67,24 +79,24 @@ class Snippet:
             },
         }
         response = requests.post(
-            SOURCECODESHOTS_URL, headers=headers, data=json.dumps(data)
+            SOURCECODESHOTS_URL,
+            headers=headers,
+            data=json.dumps(data),
+            timeout=10,
+            verify=True,
+            stream=True,
         )
 
         # Ensure the request was successful
         response.raise_for_status()
 
         # Create a Path object for the new file
-        filename = (
-            f"snippet-{hash((self._content, self._language, theme))}"
-            if filename is None
-            else filename
-        )
-        location = Path("snippets") if location is None else location
         image_path = location / f"{filename}.png"
         image_path.parent.mkdir(parents=True, exist_ok=True)
 
         # Write the image data to a file
         with open(image_path, "wb") as f:
-            f.write(response.content)
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
 
         return image_path
