@@ -18,6 +18,14 @@ class Snippet:
     def __repr__(self) -> str:
         return f"Snippet(content={self._content}, language={self._language})"
 
+    @property
+    def content(self) -> str:
+        return self._content
+
+    @property
+    def language(self) -> Language:
+        return self._language
+
     @classmethod
     def from_file(cls, path: Path) -> "Snippet":
         """Create a Snippet object from a file.
