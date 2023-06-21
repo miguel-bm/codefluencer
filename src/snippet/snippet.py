@@ -70,7 +70,12 @@ class Snippet:
         if not filename.isidentifier():
             raise ValueError("Filename must be a valid identifier.")
 
-        headers = {"Content-Type": "application/json", "User-Agent": "CodeFluencer"}
+        image_path = location / f"{filename}.png"
+
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "CodeFluencer",
+        }
         data = {
             "code": self._content,
             "settings": {
@@ -79,7 +84,7 @@ class Snippet:
             },
         }
         response = requests.post(
-            SOURCECODESHOTS_URL,
+            url=SOURCECODESHOTS_URL,
             headers=headers,
             data=json.dumps(data),
             timeout=10,
@@ -90,8 +95,7 @@ class Snippet:
         # Ensure the request was successful
         response.raise_for_status()
 
-        # Create a Path object for the new file
-        image_path = location / f"{filename}.png"
+        # Ensure the directory exists
         image_path.parent.mkdir(parents=True, exist_ok=True)
 
         # Write the image data to a file
